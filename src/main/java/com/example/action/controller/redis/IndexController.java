@@ -36,4 +36,15 @@ public class IndexController {
             }
         }
     }
+
+    /**
+     * 集群模式
+     * @throws InterruptedException
+     */
+    @RequestMapping("/test_cluster")
+    public void testCluster() throws InterruptedException {
+        stringRedisTemplate.opsForValue().set("黄忠", "666");
+        stringRedisTemplate.opsForValue().set("马超", "555");
+        System.out.println(stringRedisTemplate.opsForValue().get("黄忠"));
+    }
 }
