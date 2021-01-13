@@ -6,6 +6,21 @@ spring:
     #type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  redis:
+    database: 0
+    timeout: 3000
+    sentinel: #哨兵模式
+      master: mymaster #主服务器所在集群名称
+      nodes: 192.168.218.133:26379,192.168.218.133:26380,192.168.218.133:26381
+    lettuce:
+      pool:
+        max-idle: 50
+        min-idle: 10
+        max-active: 100
+        max-wait: 1000
+server:
+  port: 8080
+
 mybatis:
   mapper-locations: classpath:/mapper/*Dao.xml
   typeAliasesPackage: com.example.action.entity
