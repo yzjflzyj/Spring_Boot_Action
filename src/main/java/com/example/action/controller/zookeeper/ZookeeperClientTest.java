@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.*;
 
 import org.apache.zookeeper.data.Stat;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
