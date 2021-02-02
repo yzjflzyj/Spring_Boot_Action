@@ -116,4 +116,15 @@ public class CuratorClientTest {
         TimeUnit.SECONDS.sleep(Integer.MAX_VALUE);
     }
 
+    public void createIfNeed(String NODE_CACHE){
+        try {
+            if (curatorClient.checkExists().forPath(NODE_CACHE) == null) {
+                String path = curatorClient.create().forPath(NODE_CACHE);
+                log.info("curator create node :{}  successfully.", path);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

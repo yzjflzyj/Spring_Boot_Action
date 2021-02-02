@@ -13,11 +13,7 @@ public class NodeCacheTest extends CuratorClientTest {
     @Test
     public void testNodeCacheTest() throws Exception {
 
-
-        if (curatorClient.checkExists().forPath(NODE_CACHE) == null) {
-            String path = curatorClient.create().forPath(NODE_CACHE);
-            log.info("curator create node :{}  successfully.", path);
-        }
+        createIfNeed(NODE_CACHE);
         NodeCache nodeCache = new NodeCache(curatorClient, NODE_CACHE);
         nodeCache.getListenable().addListener(new NodeCacheListener() {
             @Override
