@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class CuratorClientTest {
 
     protected static CuratorFramework curatorClient;
-    protected static final String ZK_ADDRESS="192.168.218.129:2181";
+    protected static final String ZK_ADDRESS="192.168.218.131:2181";
     protected static final int SESSION_TIMEOUT = 50000;// 会话超时时间
     protected static final int CONNECTION_TIMEOUT = 50000;// 连接超时时间
 

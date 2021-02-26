@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class ZookeeperClientTest {
 
-    private static final String ZK_ADDRESS="192.168.218.129:2181";
+    private static final String ZK_ADDRESS="192.168.218.131:2181";
 
     private static final int SESSION_TIMEOUT = 5000;
 

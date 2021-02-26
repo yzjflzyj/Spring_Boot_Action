@@ -51,7 +51,6 @@ public class JedisSingleTest {
                             " return 0 ";
             Object obj = jedis.eval(script, Arrays.asList("product_count_10016"), Arrays.asList("10"));
             System.out.println(obj);*/
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

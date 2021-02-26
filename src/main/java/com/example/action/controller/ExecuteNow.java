@@ -12,12 +12,13 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-public class ExecuteNow implements InitializingBean {
+//public class ExecuteNow implements InitializingBean {
+public class ExecuteNow {
 
     @Resource
     private UserService userService;
 
-    @Override
+    //@Override
     public void afterPropertiesSet() throws Exception {
         User user1 = new User();
         user1.setId(1);
