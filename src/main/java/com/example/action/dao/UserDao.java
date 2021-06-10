@@ -1,10 +1,11 @@
 package com.example.action.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.action.entity.User;
 
 import java.util.List;
 
-public interface UserDao {
+public interface UserDao extends BaseMapper<User> {
     int deleteByPrimaryKey(Integer id);
 
     int insert(User record);
