@@ -4,6 +4,8 @@ package com.example.action;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.action.dao.UserDao;
 import com.example.action.entity.User;
 import lombok.extern.java.Log;
@@ -40,5 +42,27 @@ public class UserServiceImplTest {
         userDao.update(user, userUpdateWrapper);
 
         System.out.println("好好");
+    }
+
+    @Test
+    public void testSelectPage() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper();
+        // queryWrapper.eq("username", "yanjie");
+        int count = userDao.selectCount(queryWrapper);
+        int pageSize=2;
+        int pageCount= (int) Math.ceil((double) count/pageSize);
+        Page<User> page = new Page<>();
+        page.setSize(pageSize);
+        for (int i = 1; i <= pageCount; i++) {
+            page.setCurrent(i);
+            pageFun(page,queryWrapper);
+        }
+
+    }
+
+    public void pageFun(Page<User> page,QueryWrapper<User> queryWrapper ){
+        IPage<User> userPage = userDao.selectPage(page, queryWrapper);
+        List<User> records = userPage.getRecords();
+        System.out.println(records);
     }
 }
