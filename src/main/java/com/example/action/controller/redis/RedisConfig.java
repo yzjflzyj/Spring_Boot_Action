@@ -2,6 +2,8 @@ package com.example.action.controller.redis;
 
 
 import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
+import org.redisson.Redisson;
+import org.redisson.config.Config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -57,5 +59,18 @@ public class RedisConfig {
         jedisClusterNode.add(new HostAndPort("192.168.218.132", 8007));
         jedisClusterNode.add(new HostAndPort("192.168.218.133", 8006));
         return new JedisCluster(jedisClusterNode, 6000, 5000, 10, null, config);
+    }
+
+    @Bean
+    public Redisson redisson(){
+        Config config=new Config();
+        config.useClusterServers()
+                .addNodeAddress("redis://192.168.218.131:8001")
+                .addNodeAddress("redis://192.168.218.132:8002")
+                .addNodeAddress("redis://192.168.218.133:8003")
+                .addNodeAddress("redis://192.168.218.131:8004")
+                .addNodeAddress("redis://192.168.218.132:8007")
+                .addNodeAddress("redis://192.168.218.133:8006");
+        return (Redisson) Redisson.create(config);
     }
 }

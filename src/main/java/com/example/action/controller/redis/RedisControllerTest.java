@@ -1,6 +1,8 @@
 package com.example.action.controller.redis;
 
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.Redisson;
+import org.redisson.api.RLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -24,6 +26,8 @@ public class RedisControllerTest {
     private StringRedisTemplate stringRedisTemplate;
     @Autowired
     private JedisCluster jedisCluster;
+    @Autowired
+    private Redisson redisson;
     @Value("${server.port}")
     private String serverPort;
 
@@ -139,7 +143,7 @@ public class RedisControllerTest {
      */
     private String methodSetNxOptimizationForDelete() {
         String value = UUID.randomUUID().toString() + Thread.currentThread().getName();
-        Boolean flag = stringRedisTemplate.opsForValue().setIfAbsent(REDIS_LOCK, value, 10, TimeUnit.MINUTES);   //1.设置过期时间,expire,但和setNx没有必要分开,因此放在一起保持原子性
+        Boolean flag = stringRedisTemplate.opsForValue().setIfAbsent(REDIS_LOCK, value, 30, TimeUnit.MINUTES);   //1.设置过期时间,expire,但和setNx没有必要分开,因此放在一起保持原子性
         if (!flag) {
             log.info("没有抢到redis分布式锁");
             return "没有抢到redis分布式锁";
@@ -154,7 +158,7 @@ public class RedisControllerTest {
             }
         } finally {
             //方式一:lua脚本
-            String script = " if redis.call('get',KEYS[1]) == ARGV[1]  " +
+            /*String script = " if redis.call('get',KEYS[1]) == ARGV[1]  " +
                     " then " +
                     " return redis.call('del', KEYS[1]) " +
                     " else " +
@@ -176,9 +180,9 @@ public class RedisControllerTest {
                         e.printStackTrace();
                     }
                 }
-            }
-            //方式2:事务
-            /*while (true) {
+            }*/
+            //方式2:事务,集群是不支持事务的
+            while (true) {
                 stringRedisTemplate.watch(REDIS_LOCK);  //乐观锁,在REDIS_LOCK锁被人动过,那么删除事务就会失败,
                 if (value.equals(stringRedisTemplate.opsForValue().get(REDIS_LOCK))) {  //2.防止误解锁
                     stringRedisTemplate.setEnableTransactionSupport(true);
@@ -188,10 +192,36 @@ public class RedisControllerTest {
                     if (list == null) {
                         continue;
                     }
-                    stringRedisTemplate.unwatch();
-                    break;
                 }
-            }*/
+                stringRedisTemplate.unwatch();
+                break;
+            }
+        }
+        log.info(serverPort + "端口号库存减1,当前库存为" + count);
+        return serverPort + "端口号库存减1,当前库存为" + count;
+    }
+
+    /**
+     * redisson的demo
+     * @return
+     */
+    private String methodRedisson() {
+        String value = UUID.randomUUID().toString() + Thread.currentThread().getName();
+        RLock lock = redisson.getLock(REDIS_LOCK);
+        lock.lock();
+        Boolean flag = stringRedisTemplate.opsForValue().setIfAbsent(REDIS_LOCK, value, 30, TimeUnit.MINUTES);   //1.设置过期时间,expire,但和setNx没有必要分开,因此放在一起保持原子性
+        int count;
+        try {
+            String result = stringRedisTemplate.opsForValue().get("good:001");
+            count = result == null ? 0 : Integer.parseInt(result);
+            if (count > 0) {
+                count--;
+                stringRedisTemplate.opsForValue().set("good:001", String.valueOf(count));
+            }
+        } finally {
+            if (lock.isLocked() && lock.isHeldByCurrentThread()){
+                lock.unlock();
+            }
         }
         log.info(serverPort + "端口号库存减1,当前库存为" + count);
         return serverPort + "端口号库存减1,当前库存为" + count;
