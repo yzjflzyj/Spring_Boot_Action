@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *  * 而且这个版本中，虽然重现了我们在原生API中的事务消息逻辑，但是测试过程中还是发现一些奇怪的特性，用的时候要注意点。
  */
 //@RocketMQTransactionListener(txProducerGroup = "springBootGroup2")
-@RocketMQTransactionListener(rocketMQTemplateBeanName = "rocketMQTemplate_springBoot")
+//@RocketMQTransactionListener(rocketMQTemplateBeanName = "rocketMQTemplate")
 public class MyTransactionSpringBootImpl implements RocketMQLocalTransactionListener {
 
     private ConcurrentHashMap<Object, Message> localTrans = new ConcurrentHashMap<>();
